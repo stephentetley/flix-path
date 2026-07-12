@@ -21,33 +21,77 @@ pub mod Interop.Path {
 
     pub type alias Path = String
 
-    pub def getExtension(s: Path): Option[String] = 
-        getFileName(s) 
+
+    pub def startsWith(s: {prefix = String}, p: Path): Bool = 
+        try {
+            let p1 = unsafe IO { JPath.of(p) };
+            unsafe IO { p1.startsWith(s#prefix) }
+        } catch  {
+            case _ : JException => false
+        }
+
+    pub def endsWith(s: {suffix = String}, p: Path): Bool = 
+        try {
+            let p1 = unsafe IO { JPath.of(p) };
+            unsafe IO { p1.endsWith(s#suffix) }
+        } catch  {
+            case _ : JException => false
+        }
+
+
+    pub def getExtension(p: Path): Option[String] = 
+        getFileName(p) 
             |> Option.flatMap(s1 -> String.splitOn(substr = ".", s1) |> List.last)
 
 
-    pub def getFileName(s: Path): Option[String] = 
+    pub def getFileName(p: Path): Option[String] = 
         try {
-            let p = unsafe IO { JPath.of(s) };
-            let name = unsafe IO { p.getFileName().toString() };
+            let p1 = unsafe IO { JPath.of(p) };
+            let name = unsafe IO { p1.getFileName().toString() };
+            if (Object.isNull(name)) None else Some(name)
+        } catch  {
+            case _ : JException => None
+        }
+
+    pub def getParent(p: Path): Option[String] = 
+        try {
+            let p1 = unsafe IO { JPath.of(p) };
+            let name = unsafe IO { p1.getParent().toString() };
+            if (Object.isNull(name)) None else Some(name)
+        } catch  {
+            case _ : JException => None
+        }
+
+    pub def getRoot(p: Path): Option[String] = 
+        try {
+            let p1 = unsafe IO { JPath.of(p) };
+            let name = unsafe IO { p1.getRoot().toString() };
             if (Object.isNull(name)) None else Some(name)
         } catch  {
             case _ : JException => None
         }
 
 
-    pub def isAbsolute(s: Path): Bool = 
+    pub def isAbsolute(p: Path): Bool = 
         try {
-            let p = unsafe IO { JPath.of(s) };
-            unsafe IO { p.isAbsolute() }
+            let p1 = unsafe IO { JPath.of(p) };
+            unsafe IO { p1.isAbsolute() }
         } catch {
             case _ : JException => false
         }
 
-    pub def nth(i: Int32, s: Path): Option[String] = 
+    pub def normalize(p: Path): Path = 
         try {
-            let p = unsafe IO { JPath.of(s) };
-            let name = unsafe IO { p.getName(i).toString() };
+            let p1 = unsafe IO { JPath.of(p) };
+            unsafe IO { p1.normalize().toString() }
+        } catch  {
+            case _ : JException => ""
+        }
+
+    pub def nth(i: Int32, p: Path): Option[String] = 
+        try {
+            let p1 = unsafe IO { JPath.of(p) };
+            let name = unsafe IO { p1.getName(i).toString() };
             Some(name)
         } catch  {
             case _ : JException => None
