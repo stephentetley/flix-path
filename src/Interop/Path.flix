@@ -17,27 +17,18 @@
 pub mod Interop.Path {
 
     import java.nio.file.{Path => JPath}
+    import java.lang.{Exception => JException}
 
-    pub eff Path {
-        def reify(): JPath
-    }
 
-    pub def handle(s: String, f: a -> b \ ef): a -> b \ (ef - Path) = x -> {
-        let path = unsafe IO { JPath.of(s) };
-        run {
-            f(x)
-        } with handler Path {
-            
-            def reify(k) = k(path)
+
+    pub def nth(i: Int32, s: String): Option[String] = 
+        try {
+            let p = unsafe IO { JPath.of(s) };
+            let name = unsafe IO { p.getName(i).toString() };
+            Some(name)
+        } catch  {
+            case _ : JException => None
         }
-    }
 
-
-    pub def runPath(s: String, f: Unit -> a \ ef): a \ (ef - Path) = handle(s, f)()
-
-
-    pub def getName(i: Int32): String \ Path = 
-        let p = Path.reify();
-        unsafe IO { p.getName(i).toString() }
 
 }
