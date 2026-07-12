@@ -1,7 +1,7 @@
 
 pub mod TestPath {
 
-    use Interop.Path.{nth}
+    use Interop.Path.{nth, getExtension}
 
     @Test
     def nth01(): Unit \ Assert + IO = 
@@ -17,5 +17,14 @@ pub mod TestPath {
         println(name);
         Assert.assertEq(expected = Some("lib"), name)
 
+
+    @Test
+    def getExtension01(): Unit \ Assert + IO = 
+        let p = "C:\\Users\\Stephen\\Documents\\cv.pdf";
+        let ext = getExtension(p);
+        println(ext);
+        Assert.assertEq(expected = Some("pdf"), ext)
+
+     
 }
 

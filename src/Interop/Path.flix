@@ -19,9 +19,32 @@ pub mod Interop.Path {
     import java.nio.file.{Path => JPath}
     import java.lang.{Exception => JException}
 
+    pub type alias Path = String
+
+    pub def getExtension(s: Path): Option[String] = 
+        getFileName(s) 
+            |> Option.flatMap(s1 -> String.splitOn(substr = ".", s1) |> List.last)
 
 
-    pub def nth(i: Int32, s: String): Option[String] = 
+    pub def getFileName(s: Path): Option[String] = 
+        try {
+            let p = unsafe IO { JPath.of(s) };
+            let name = unsafe IO { p.getFileName().toString() };
+            if (Object.isNull(name)) None else Some(name)
+        } catch  {
+            case _ : JException => None
+        }
+
+
+    pub def isAbsolute(s: Path): Bool = 
+        try {
+            let p = unsafe IO { JPath.of(s) };
+            unsafe IO { p.isAbsolute() }
+        } catch {
+            case _ : JException => false
+        }
+
+    pub def nth(i: Int32, s: Path): Option[String] = 
         try {
             let p = unsafe IO { JPath.of(s) };
             let name = unsafe IO { p.getName(i).toString() };
