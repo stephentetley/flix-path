@@ -14,13 +14,26 @@
 // limitations under the License.
 //
 
+
+
+
 pub mod Interop.Path {
 
+    
     import java.nio.file.{Path => JPath}
     import java.lang.{Exception => JException}
 
     pub type alias Path = String
 
+
+    pub def concat(p1: Path, p2: Path): Option[Path] = 
+        try {
+            let ans = unsafe IO { JPath.of(p1, p2).toString() };
+            Some(ans)
+        } catch {
+            case _ : JException => None
+        }
+        
 
     pub def startsWith(s: {prefix = String}, p: Path): Bool = 
         try {
@@ -43,6 +56,11 @@ pub mod Interop.Path {
         getFileName(p) 
             |> Option.flatMap(s1 -> String.splitOn(substr = ".", s1) |> List.last)
 
+    pub def swapExtension(ext: String, p: Path): Option[Path] = 
+        forM(dirpath <- getParent(p);
+                base <- getBaseName(p);
+                p1 <- concat(dirpath, base ++ "." ++ ext))
+            yield(p1)
 
     pub def getFileName(p: Path): Option[String] = 
         try {
@@ -52,6 +70,11 @@ pub mod Interop.Path {
         } catch  {
             case _ : JException => None
         }
+
+    pub def getBaseName(p: Path): Option[String] = 
+        forM(s <- getFileName(p); i <- String.indexOfRight(substr = ".", s))
+            yield String.takeLeft(i, s)
+            
 
     pub def getParent(p: Path): Option[String] = 
         try {
