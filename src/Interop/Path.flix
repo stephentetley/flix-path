@@ -62,6 +62,15 @@ pub mod Interop.Path {
                 p1 <- concat(dirpath, base ++ "." ++ ext))
             yield(p1)
 
+    pub def mapExtension(f: String -> String \ ef, p: Path): Option[Path] \ ef = 
+        forM(dirpath <- getParent(p);
+                base <- getBaseName(p);
+                ext <- getExtension(p);
+                p1 <- concat(dirpath, base ++ "." ++ f(ext)))
+            yield(p1)
+
+
+
     pub def getFileName(p: Path): Option[String] = 
         try {
             let p1 = unsafe IO { JPath.of(p) };
@@ -74,7 +83,19 @@ pub mod Interop.Path {
     pub def getBaseName(p: Path): Option[String] = 
         forM(s <- getFileName(p); i <- String.indexOfRight(substr = ".", s))
             yield String.takeLeft(i, s)
-            
+    
+    pub def swapBaseName(baseName: String, p: Path): Option[Path] = 
+        forM(dirpath <- getParent(p);
+                ext <- getExtension(p);
+                p1 <- concat(dirpath, baseName ++ "." ++ ext))
+            yield(p1)
+
+    pub def mapBaseName(f: String -> String \ ef, p: Path): Option[Path] \ ef = 
+        forM(dirpath <- getParent(p);
+                base <- getBaseName(p);
+                ext <- getExtension(p);
+                p1 <- concat(dirpath, f(base) ++ "." ++ ext))
+            yield(p1)
 
     pub def getParent(p: Path): Option[String] = 
         try {
@@ -93,6 +114,11 @@ pub mod Interop.Path {
         } catch  {
             case _ : JException => None
         }
+
+    pub def getNameCount(p: Path): Int32 = 
+        let p1 = unsafe IO { JPath.of(p) };
+        unsafe IO { p1.getNameCount() }
+
 
 
     pub def isAbsolute(p: Path): Bool = 
@@ -120,5 +146,43 @@ pub mod Interop.Path {
             case _ : JException => None
         }
 
+    pub def slice(start: { start = Int32 }, end: { end = Int32 }, p: Path): Option[Path] =
+        try {
+            let p1 = unsafe IO { JPath.of(p) };
+            let name = unsafe IO { p1.subpath(start#start, end#end).toString() };
+            if (Object.isNull(name)) None else Some(name)
+        } catch  {
+            case _ : JException => None
+        }
+
+    pub def resolve(other: { other = String }, p: Path): Option[Path] =
+        try {
+            let p1 = unsafe IO { JPath.of(p) };
+            let name = unsafe IO { p1.resolve(other#other).toString() };
+            if (Object.isNull(name)) None else Some(name)
+        } catch  {
+            case _ : JException => None
+        }
+
+    pub def resolveSibling(other: { other = String }, p: Path): Option[Path] =
+        try {
+            let p1 = unsafe IO { JPath.of(p) };
+            let name = unsafe IO { p1.resolveSibling(other#other).toString() };
+            if (Object.isNull(name)) None else Some(name)
+        } catch  {
+            case _ : JException => None
+        }
+
+    pub def relativize(other: { other = String }, p: Path): Option[Path] =
+        try {
+            let p1 = unsafe IO { JPath.of(p) };
+            let other1 = unsafe IO { JPath.of(other#other) };
+            let name = unsafe IO { p1.relativize(other1).toString() };
+            if (Object.isNull(name)) None else Some(name)
+        } catch  {
+            case _ : JException => None
+        }
+
+    // TODO iterator
 
 }
