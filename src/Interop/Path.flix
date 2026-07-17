@@ -18,10 +18,11 @@
 
 
 pub mod Interop.Path {
-
+    
     
     import java.nio.file.{Path => JPath}
     import java.lang.{Exception => JException}
+    import java.util.{Iterator => JIterator}
 
     pub type alias Path = String
 
@@ -183,6 +184,12 @@ pub mod Interop.Path {
             case _ : JException => None
         }
 
-    // TODO iterator
+    pub def iterator(rc: Region[r], p: Path): Iterator[String, r, r] = 
+        def toStr(jp: JPath) = unsafe IO { jp.toString() };
+        let p1 = unsafe IO { JPath.of(p) };
+        let jiter: JIterator[JPath] = unsafe IO { p1.iterator() };
+        let iterPath: Iterator[JPath, r, r] = Adaptor.fromIterator(rc, (Proxy.Proxy: Proxy[JPath]), jiter);
+        let ans = Iterator.map(toStr, iterPath);
+        ans
 
 }

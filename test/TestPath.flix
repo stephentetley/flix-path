@@ -54,5 +54,21 @@ pub mod TestPath {
         println(ext);
         Assert.assertEq(expected = Some("cv"), ext)
      
+
+    @Test
+    def iterator01(): Unit \ Assert = region rc {
+        let p = "/home/users/Stephen/Documents/cv.pdf";
+        let iter = Interop.Path.iterator(rc, p);
+        let longest = Ref.fresh(rc, "");
+        Iterator.forEach(
+            s -> { 
+                let x = Ref.get(longest); 
+                if (String.length(s) > String.length(x)) Ref.put(s, longest) else ()
+                },
+            iter);
+        Assert.assertEq(expected = "Documents", Ref.get(longest))
+    }
+
+
 }
 
