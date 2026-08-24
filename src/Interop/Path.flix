@@ -20,6 +20,7 @@
 pub mod Interop.Path {
     
     use EffectExtras.Fail.Fail
+    use JavaInterop.AdaptorExtras2
 
     import java.nio.file.{Path => JPath}
     import java.lang.{Exception => JException}
@@ -27,30 +28,31 @@ pub mod Interop.Path {
 
     pub type alias Path = String
 
-
-    pub def concat(p1: Path, p2: Path): Path \ Fail = 
+    // Add to AdaptorExtras...
+    def adaptorExtras_guarded(f: Unit -> a \ ef): a \ ef + Fail = 
         try {
-            unsafe IO { JPath.of(p1, p2).toString() }
-        } catch {
+            let ans = f();
+            Fail.returnNotNull(ans)
+        } catch  {
             case ex : JException => Fail.report(ex.getMessage())
         }
+
+
+    pub def concat(p1: Path, p2: Path): Path \ Fail = 
+        AdaptorExtras2.of(() -> unsafe IO { JPath.of(p1, p2).toString() })
         
 
     pub def startsWith(s: {prefix = String}, p: Path): Bool \ Fail = 
-        try {
+        adaptorExtras_guarded(() -> {
             let p1 = unsafe IO { JPath.of(p) };
             unsafe IO { p1.startsWith(s#prefix) }
-        } catch  {
-            case ex : JException => Fail.report(ex.getMessage())
-        }
+        })
 
     pub def endsWith(s: {suffix = String}, p: Path): Bool \ Fail = 
-        try {
+        adaptorExtras_guarded(() -> {
             let p1 = unsafe IO { JPath.of(p) };
             unsafe IO { p1.endsWith(s#suffix) }
-        } catch  {
-            case ex : JException => Fail.report(ex.getMessage())
-        }
+        })
 
 
     pub def getExtension(p: Path): String \ Fail = 
@@ -71,14 +73,10 @@ pub mod Interop.Path {
 
 
     pub def getFileName(p: Path): String \ Fail = 
-        try {
+        adaptorExtras_guarded(() -> {
             let p1 = unsafe IO { JPath.of(p) };
-            let name = unsafe IO { p1.getFileName().toString() };
-            Fail.assertNotNull(name);
-            name
-        } catch  {
-            case ex : JException => Fail.report(ex.getMessage())
-        }
+            unsafe IO { p1.getFileName().toString() }
+        })
 
     pub def getBaseName(p: Path): String \ Fail = 
         let s = getFileName(p);
@@ -97,24 +95,16 @@ pub mod Interop.Path {
         concat(dirpath, f(base) ++ "." ++ ext)
 
     pub def getParent(p: Path): String \ Fail = 
-        try {
+        adaptorExtras_guarded(() -> {
             let p1 = unsafe IO { JPath.of(p) };
-            let name = unsafe IO { p1.getParent().toString() };
-            Fail.assertNotNull(name);
-            name
-        } catch  {
-            case ex : JException => Fail.report(ex.getMessage())
-        }
+            unsafe IO { p1.getParent().toString() }
+        })
 
     pub def getRoot(p: Path): String \ Fail = 
-        try {
+        adaptorExtras_guarded(() -> {
             let p1 = unsafe IO { JPath.of(p) };
-            let name = unsafe IO { p1.getRoot().toString() };
-            Fail.assertNotNull(name);
-            name
-        } catch  {
-            case ex : JException => Fail.report(ex.getMessage())
-        }
+            unsafe IO { p1.getRoot().toString() }
+        })
 
     pub def getNameCount(p: Path): Int32 = 
         let p1 = unsafe IO { JPath.of(p) };
@@ -123,69 +113,47 @@ pub mod Interop.Path {
 
 
     pub def isAbsolute(p: Path): Bool \ Fail = 
-        try {
+        adaptorExtras_guarded(() -> {
             let p1 = unsafe IO { JPath.of(p) };
             unsafe IO { p1.isAbsolute() }
-        } catch {
-            case ex : JException => Fail.report(ex.getMessage())
-        }
+        })
 
     pub def normalize(p: Path): Path \ Fail = 
-        try {
+        adaptorExtras_guarded(() -> {
             let p1 = unsafe IO { JPath.of(p) };
             unsafe IO { p1.normalize().toString() }
-        } catch  {
-            case ex : JException => Fail.report(ex.getMessage())
-        }
+        })
 
     pub def nth(i: Int32, p: Path): String \ Fail = 
-        try {
+        adaptorExtras_guarded(() -> {
             let p1 = unsafe IO { JPath.of(p) };
             unsafe IO { p1.getName(i).toString() }
-        } catch  {
-            case ex : JException => Fail.report(ex.getMessage())
-        }
+        })
 
     pub def slice(start: { start = Int32 }, end: { end = Int32 }, p: Path): Path \ Fail =
-        try {
+        adaptorExtras_guarded(() -> {
             let p1 = unsafe IO { JPath.of(p) };
-            let name = unsafe IO { p1.subpath(start#start, end#end).toString() };
-            Fail.assertNotNull(name);
-            name
-        } catch  {
-            case ex : JException => Fail.report(ex.getMessage())
-        }
+            unsafe IO { p1.subpath(start#start, end#end).toString() }
+        })
 
     pub def resolve(other: { other = String }, p: Path): Path \ Fail =
-        try {
+        adaptorExtras_guarded(() -> {
             let p1 = unsafe IO { JPath.of(p) };
-            let name = unsafe IO { p1.resolve(other#other).toString() };
-            Fail.assertNotNull(name);
-            name
-        } catch  {
-            case ex : JException => Fail.report(ex.getMessage())
-        }
+            unsafe IO { p1.resolve(other#other).toString() }
+        })
 
     pub def resolveSibling(other: { other = String }, p: Path): Path \ Fail =
-        try {
+        adaptorExtras_guarded(() -> {
             let p1 = unsafe IO { JPath.of(p) };
-            let name = unsafe IO { p1.resolveSibling(other#other).toString() };
-            Fail.assertNotNull(name);
-            name
-        } catch  {
-            case ex : JException => Fail.report(ex.getMessage())
-        }
+            unsafe IO { p1.resolveSibling(other#other).toString() }
+        })
 
     pub def relativize(other: { other = String }, p: Path): Path \ Fail =
-        try {
+        adaptorExtras_guarded(() -> {
             let p1 = unsafe IO { JPath.of(p) };
             let other1 = unsafe IO { JPath.of(other#other) };
-            let name = unsafe IO { p1.relativize(other1).toString() };
-            Fail.assertNotNull(name);
-            name
-        } catch  {
-            case ex : JException => Fail.report(ex.getMessage())
-        }
+            unsafe IO { p1.relativize(other1).toString() }
+        })
 
     pub def iterator(rc: Region[r], p: Path): Iterator[String, r, r] = 
         def toStr(jp: JPath) = unsafe IO { jp.toString() };
