@@ -20,7 +20,7 @@
 pub mod Interop.Path {
     
     use EffectExtras.Fail.Fail
-    use JavaInterop.AdaptorExtras2
+    use JavaInterop.AdaptorChecked
 
     import java.nio.file.{Path => JPath}
     import java.lang.{Exception => JException}
@@ -28,28 +28,18 @@ pub mod Interop.Path {
 
     pub type alias Path = String
 
-    // Add to AdaptorExtras...
-    def adaptorExtras_guarded(f: Unit -> a \ ef): a \ ef + Fail = 
-        try {
-            let ans = f();
-            Fail.returnNotNull(ans)
-        } catch  {
-            case ex : JException => Fail.report(ex.getMessage())
-        }
-
-
     pub def concat(p1: Path, p2: Path): Path \ Fail = 
-        AdaptorExtras2.of(() -> unsafe IO { JPath.of(p1, p2).toString() })
+        AdaptorChecked.of(() -> unsafe IO { JPath.of(p1, p2).toString() })
         
 
     pub def startsWith(s: {prefix = String}, p: Path): Bool \ Fail = 
-        adaptorExtras_guarded(() -> {
+        AdaptorChecked.guarded(() -> {
             let p1 = unsafe IO { JPath.of(p) };
             unsafe IO { p1.startsWith(s#prefix) }
         })
 
     pub def endsWith(s: {suffix = String}, p: Path): Bool \ Fail = 
-        adaptorExtras_guarded(() -> {
+        AdaptorChecked.guarded(() -> {
             let p1 = unsafe IO { JPath.of(p) };
             unsafe IO { p1.endsWith(s#suffix) }
         })
@@ -73,7 +63,7 @@ pub mod Interop.Path {
 
 
     pub def getFileName(p: Path): String \ Fail = 
-        adaptorExtras_guarded(() -> {
+        AdaptorChecked.guarded(() -> {
             let p1 = unsafe IO { JPath.of(p) };
             unsafe IO { p1.getFileName().toString() }
         })
@@ -95,13 +85,13 @@ pub mod Interop.Path {
         concat(dirpath, f(base) ++ "." ++ ext)
 
     pub def getParent(p: Path): String \ Fail = 
-        adaptorExtras_guarded(() -> {
+        AdaptorChecked.guarded(() -> {
             let p1 = unsafe IO { JPath.of(p) };
             unsafe IO { p1.getParent().toString() }
         })
 
     pub def getRoot(p: Path): String \ Fail = 
-        adaptorExtras_guarded(() -> {
+        AdaptorChecked.guarded(() -> {
             let p1 = unsafe IO { JPath.of(p) };
             unsafe IO { p1.getRoot().toString() }
         })
@@ -111,45 +101,44 @@ pub mod Interop.Path {
         unsafe IO { p1.getNameCount() }
 
 
-
     pub def isAbsolute(p: Path): Bool \ Fail = 
-        adaptorExtras_guarded(() -> {
+        AdaptorChecked.guarded(() -> {
             let p1 = unsafe IO { JPath.of(p) };
             unsafe IO { p1.isAbsolute() }
         })
 
     pub def normalize(p: Path): Path \ Fail = 
-        adaptorExtras_guarded(() -> {
+        AdaptorChecked.guarded(() -> {
             let p1 = unsafe IO { JPath.of(p) };
             unsafe IO { p1.normalize().toString() }
         })
 
     pub def nth(i: Int32, p: Path): String \ Fail = 
-        adaptorExtras_guarded(() -> {
+        AdaptorChecked.guarded(() -> {
             let p1 = unsafe IO { JPath.of(p) };
             unsafe IO { p1.getName(i).toString() }
         })
 
     pub def slice(start: { start = Int32 }, end: { end = Int32 }, p: Path): Path \ Fail =
-        adaptorExtras_guarded(() -> {
+        AdaptorChecked.guarded(() -> {
             let p1 = unsafe IO { JPath.of(p) };
             unsafe IO { p1.subpath(start#start, end#end).toString() }
         })
 
     pub def resolve(other: { other = String }, p: Path): Path \ Fail =
-        adaptorExtras_guarded(() -> {
+        AdaptorChecked.guarded(() -> {
             let p1 = unsafe IO { JPath.of(p) };
             unsafe IO { p1.resolve(other#other).toString() }
         })
 
     pub def resolveSibling(other: { other = String }, p: Path): Path \ Fail =
-        adaptorExtras_guarded(() -> {
+        AdaptorChecked.guarded(() -> {
             let p1 = unsafe IO { JPath.of(p) };
             unsafe IO { p1.resolveSibling(other#other).toString() }
         })
 
     pub def relativize(other: { other = String }, p: Path): Path \ Fail =
-        adaptorExtras_guarded(() -> {
+        AdaptorChecked.guarded(() -> {
             let p1 = unsafe IO { JPath.of(p) };
             let other1 = unsafe IO { JPath.of(other#other) };
             unsafe IO { p1.relativize(other1).toString() }
