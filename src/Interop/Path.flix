@@ -28,6 +28,10 @@ pub mod Interop.Path {
 
     pub type alias Path = String
 
+    pub def newPath(p1: Path, ps: List[Path]): Path \ Fail = 
+        let vec = List.toVector(ps);
+        AdaptorChecked.of(() -> unsafe IO { JPath.of(p1, vec).toString() })
+
     pub def concat(p1: Path, p2: Path): Path \ Fail = 
         AdaptorChecked.of(() -> unsafe IO { JPath.of(p1, p2).toString() })
         

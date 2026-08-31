@@ -2,7 +2,42 @@
 pub mod TestPath {
 
     use EffectExtras.Fail
+    use Interop.Path
     use Interop.Path.{nth, swapExtension, normalize, getFileName, getExtension, getBaseName}
+
+    @Test
+    def newPath01(): Unit \ Assert = 
+        let count = run { 
+            let p = Path.newPath("../../lib/libBlank.o", List#{});
+            Path.getNameCount(p)
+        } with Fail.runWithOption;
+        Assert.assertEq(expected = Some(4), count)
+
+    @Test
+    def newPath02(): Unit \ Assert = 
+        let count = run { 
+            let p = Path.newPath("../../lib", List#{"libBlank.o"});
+            Path.getNameCount(p)
+        } with Fail.runWithOption;
+        Assert.assertEq(expected = Some(4), count)
+
+    @Test
+    def newPath03(): Unit \ Assert = 
+        let count = run { 
+            let p = Path.newPath("../..", List#{"lib", "libBlank.o"});
+            Path.getNameCount(p)
+        } with Fail.runWithOption;
+        Assert.assertEq(expected = Some(4), count)
+
+    @Test
+    def newPath04(): Unit \ Assert = 
+        let count = run { 
+            let p = Path.newPath("..", List#{"..", "lib", "libBlank.o"});
+            Path.getNameCount(p)
+        } with Fail.runWithOption;
+        Assert.assertEq(expected = Some(4), count)
+
+
 
     @Test
     def nth01(): Unit \ Assert = 
