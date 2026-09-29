@@ -1,4 +1,4 @@
 # flix-path
 
-Flix path library based on `java.nio.file.Path`
+Flix path library wrapping `java.nio.file.Path`
 
