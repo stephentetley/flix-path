@@ -1,7 +1,7 @@
 
 pub mod TestPath {
 
-    use EffectExtras.Fail
+    use ee::EffectExtras.Fail
     use Interop.Path
     use Interop.Path.{nth, swapExtension, normalize, getFileName, getExtension, getBaseName}
 
