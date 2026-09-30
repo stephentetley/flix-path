@@ -2,8 +2,8 @@
 pub mod TestPath {
 
     use ee::EffectExtras.Fail
-    use Interop.Path
-    use Interop.Path.{nth, swapExtension, normalize, getFileName, getExtension, getBaseName}
+    use FlixPath.Path
+    use FlixPath.Path.{nth, swapExtension, normalize, getFileName, getExtension, getBaseName}
 
     @Test
     def newPath01(): Unit \ Assert = 
@@ -101,7 +101,7 @@ pub mod TestPath {
     @Test
     def iterator01(): Unit \ Assert = region rc {
         let p = "/home/users/Stephen/Documents/cv.pdf";
-        let iter = Interop.Path.iterator(rc, p);
+        let iter = FlixPath.Path.iterator(rc, p);
         let longest = Ref.fresh(rc, "");
         Iterator.forEach(
             s -> { 

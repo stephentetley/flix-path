@@ -6,11 +6,11 @@
  */
 
 
-pub mod Interop.Path {
+pub mod FlixPath.Path {
     
     use ee::EffectExtras.Fail.Fail
-    use ae::JavaInterop.AdaptorChecked
-    use ae::JavaInterop.InteropErr
+    use ae::AdaptorExtras.AdaptorChecked
+    use ae::AdaptorExtras.InteropErr
 
     import java.nio.file.{Path => JPath}
     import java.lang.{Exception => JException}

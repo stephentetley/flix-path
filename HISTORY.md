@@ -1,3 +1,9 @@
+### v0.4.0
+  Change namespace - top level is now `FlixPath`.
+
+### v0.3.1
+  Updated dependencies.
+  
 ### v0.3.0
   Updated dependencies.
   Updated to use package mounts. 
