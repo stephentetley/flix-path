@@ -1,5 +1,8 @@
+### v0.5.0
+   Updated to use the new style package definition.
+
 ### v0.4.0
-  Change namespace - top level is now `FlixPath`.
+  Changed namespace - top level is now `FlixPath`.
 
 ### v0.3.1
   Updated dependencies.

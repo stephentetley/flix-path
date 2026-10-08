@@ -1,11 +1,8 @@
 [package]
-name        = "flix-path"
-description = "test"
-version     = "0.4.0"
-flix        = "0.77.0"
-license     = "Apache-2.0"
-authors     = ["Stephen Tetley <stephen.tetley@gmail.com>"]
+version     = "0.5.0"
+flix        = "0.76.2"
+repository  = "github:stephentetley/flix-path"
 
 [dependencies]
-"github:stephentetley/effect-extras" = { version = "0.6.0", security = "unrestricted", mount = "ee" }
-"github:stephentetley/adaptor-extras" = { version = "0.5.0", security = "unrestricted", mount = "ae" }
+"github:stephentetley/effect-extras" = { version = "0.7.0", security = "unrestricted", mount = "ee" }
+"github:stephentetley/adaptor-extras" = { version = "0.6.0", security = "unrestricted", mount = "ae" }
